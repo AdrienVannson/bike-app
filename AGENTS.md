@@ -1,0 +1,1 @@
+This is a monorepo of a project to display bike rides from users (uploaded directly or from the garmin api). It has a frontend (react, vite) and a backend (on aws).
