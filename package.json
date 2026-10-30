@@ -1,11 +1,8 @@
 {
   "name": "bike",
   "version": "1.0.0",
+  "private": true,
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -14,11 +11,16 @@
       "name": "pnpm",
       "version": "12.15.0",
       "onFail": "download"
+    },
+    "runtime": {
+      "name": "node",
+      "version": "26.12.1",
+      "onFail": "download"
     }
   },
   "packageManager": "pnpm@12.15.0",
   "type": "module",
-  "dependencies": {
+  "devDependencies": {
     "typescript": "^7.0.2"
   }
 }
