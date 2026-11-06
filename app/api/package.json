@@ -1,0 +1,5 @@
+{
+  "name": "@bike/api",
+  "private": true,
+  "type": "module"
+}
