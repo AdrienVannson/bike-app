@@ -19,3 +19,12 @@ updates:
       github-actions:
         patterns:
           - "*"
+
+  - package-ecosystem: "terraform"
+    directory: "/infra"
+    schedule:
+      interval: "monthly"
+    groups:
+      terraform:
+        patterns:
+          - "*"
