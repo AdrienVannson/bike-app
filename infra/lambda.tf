@@ -1,4 +1,4 @@
-
+# Shared by every Lambda: same code bundle, one handler per function.
 data "archive_file" "api" {
   type        = "zip"
   source_dir  = "${path.module}/../app/api"
@@ -18,6 +18,8 @@ data "aws_iam_policy_document" "assume_role" {
   }
 }
 
+# --- API monolith ------------------------------------------------------------
+
 resource "aws_iam_role" "api" {
   name               = "bike-api-lambda"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
@@ -28,13 +30,26 @@ resource "aws_iam_role_policy_attachment" "api_logs" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-resource "aws_lambda_function" "hello" {
-  function_name = "bike-api-hello"
+resource "aws_cloudwatch_log_group" "api" {
+  name              = "/aws/lambda/bike-api"
+  retention_in_days = 30
+}
+
+resource "aws_lambda_function" "api" {
+  function_name = "bike-api"
   role          = aws_iam_role.api.arn
 
   runtime = "nodejs26.x"
-  handler = "src/hello.handler"
+  handler = "src/index.handler"
+
+  timeout     = 29
+  memory_size = 256
 
   filename         = data.archive_file.api.output_path
   source_code_hash = data.archive_file.api.output_base64sha256
+
+  depends_on = [
+    aws_cloudwatch_log_group.api,
+    aws_iam_role_policy_attachment.api_logs,
+  ]
 }
