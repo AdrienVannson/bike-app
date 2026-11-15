@@ -31,5 +31,5 @@ resource "aws_lambda_permission" "api" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.api.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn = "${aws_apigatewayv2_api.api_gateway.execution_arn}/*/$default"
+  source_arn    = "${aws_apigatewayv2_api.api_gateway.execution_arn}/*/$default"
 }
