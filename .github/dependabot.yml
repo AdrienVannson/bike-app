@@ -21,7 +21,9 @@ updates:
           - "*"
 
   - package-ecosystem: "terraform"
-    directory: "/infra"
+    directories:
+      - "/infra"
+      - "/infra/bootstrap"
     schedule:
       interval: "monthly"
     groups:
