@@ -16,7 +16,3 @@ terraform {
 provider "aws" {
   region = "eu-west-3"
 }
-
-output "hello_url" {
-  value = "${aws_apigatewayv2_api.http.api_endpoint}/hello"
-}
