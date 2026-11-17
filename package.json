@@ -6,6 +6,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "scripts": {
+    "db:reset": "pnpm --filter @bike/db sql db/schema.sql",
+    "db:seed": "pnpm --filter @bike/db sql db/seed.sql"
+  },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
@@ -19,8 +23,5 @@
     }
   },
   "packageManager": "pnpm@12.15.0",
-  "type": "module",
-  "devDependencies": {
-    "typescript": "^7.0.2"
-  }
+  "type": "module"
 }
