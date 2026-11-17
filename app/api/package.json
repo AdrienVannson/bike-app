@@ -1,5 +1,8 @@
 {
   "name": "@bike/api",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@aws-sdk/client-rds-data": "^3.1169.0"
+  }
 }
