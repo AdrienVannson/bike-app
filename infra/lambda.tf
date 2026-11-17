@@ -3,6 +3,7 @@ data "archive_file" "api" {
   type        = "zip"
   source_dir  = "${path.module}/../app/api"
   output_path = "${path.module}/build/api.zip"
+  excludes = ["node_modules/**"]
 }
 
 data "aws_iam_policy_document" "assume_role" {
