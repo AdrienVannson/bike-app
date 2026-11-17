@@ -8,7 +8,15 @@
   "license": "ISC",
   "scripts": {
     "db:reset": "pnpm --filter @bike/db sql db/schema.sql",
-    "db:seed": "pnpm --filter @bike/db sql db/seed.sql"
+    "db:seed": "pnpm --filter @bike/db sql db/seed.sql",
+    "fmt": "pnpm fmt:ts && pnpm fmt:sql && pnpm fmt:tf",
+    "fmt:ts": "biome format --write",
+    "fmt:sql": "git ls-files -z '*.sql' | xargs -0 -n1 sql-formatter --fix -c .sql-formatter.json",
+    "fmt:tf": "terraform -chdir=infra fmt -recursive",
+    "fmt-check": "pnpm fmt-check:ts && pnpm fmt-check:sql && pnpm fmt-check:tf",
+    "fmt-check:ts": "biome format",
+    "fmt-check:sql": "git ls-files -z '*.sql' | xargs -0 -I{} sh -c 'sql-formatter -c .sql-formatter.json \"$1\" | diff -u \"$1\" -' _ {}",
+    "fmt-check:tf": "terraform -chdir=infra fmt -recursive -check -diff"
   },
   "devEngines": {
     "packageManager": {
@@ -23,5 +31,9 @@
     }
   },
   "packageManager": "pnpm@12.15.0",
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@biomejs/biome": "2.6.8",
+    "sql-formatter": "15.9.0"
+  }
 }
