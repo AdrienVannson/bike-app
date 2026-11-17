@@ -1,0 +1,14 @@
+{
+  "name": "@bike/db",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sql": "node scripts/sql.ts"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-rds-data": "^3.1169.0",
+    "@tsconfig/node26": "^26.0.2",
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
+  }
+}

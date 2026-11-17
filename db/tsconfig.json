@@ -1,0 +1,22 @@
+{
+  // Base: Node 26 target/lib/module, types ["node"].
+  "extends": "@tsconfig/node26/tsconfig.json",
+  // Scripts run directly with Node (type stripping), never compiled.
+  "compilerOptions": {
+    "noEmit": true,
+
+    // Type stripping
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+
+    // Strictness
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+  },
+  "include": ["**/*.ts"]
+}
