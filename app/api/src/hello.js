@@ -1,9 +1,9 @@
 export async function handler() {
-    return {
-        "statusCode": 200,
-        "headers": {
-            "content-type": "application/json",
-        },
-        "body": '{"message":"Hello world"}'
-    }
+  return {
+    statusCode: 200,
+    headers: {
+      "content-type": "application/json",
+    },
+    body: '{"message":"Hello world"}',
+  };
 }

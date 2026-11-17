@@ -45,7 +45,8 @@ export function splitStatements(sql: string): string[] {
     if (!inDollarQuote && /^\s*--/.test(line)) continue;
     lines.push(line);
     // An odd number of $$ on the line opens or closes a quoted body.
-    if ((line.match(/\$\$/g) ?? []).length % 2 === 1) inDollarQuote = !inDollarQuote;
+    if ((line.match(/\$\$/g) ?? []).length % 2 === 1)
+      inDollarQuote = !inDollarQuote;
     if (!inDollarQuote && /;\s*$/.test(line)) flush();
   }
   if (inDollarQuote) throw new Error("unterminated $$-quoted body");
@@ -59,10 +60,14 @@ function summary(statement: string): string {
 }
 
 function terraformOutput(name: string): string {
-  return execFileSync("terraform", [`-chdir=${resolve(ROOT, "infra")}`, "output", "-raw", name], {
-    encoding: "utf8",
-    stdio: ["ignore", "pipe", "inherit"],
-  }).trim();
+  return execFileSync(
+    "terraform",
+    [`-chdir=${resolve(ROOT, "infra")}`, "output", "-raw", name],
+    {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "inherit"],
+    },
+  ).trim();
 }
 
 async function confirm(question: string): Promise<boolean> {
@@ -96,7 +101,9 @@ async function run(files: string[]): Promise<void> {
   const client = new RDSDataClient({ region: resourceArn.split(":")[3] });
 
   console.log(`Statements to run on ${resourceArn}:`);
-  statements.forEach((s, i) => console.log(`  ${String(i + 1).padStart(3)}  ${summary(s)}`));
+  statements.forEach((s, i) =>
+    console.log(`  ${String(i + 1).padStart(3)}  ${summary(s)}`),
+  );
   if (!(await confirm("Run them? [y/N] "))) {
     console.log("Aborted.");
     process.exit(1);
@@ -112,27 +119,44 @@ async function run(files: string[]): Promise<void> {
     // The cluster auto-pauses; calls fail while it resumes (~15-30s).
     for (let attempt = 1; !transactionId; attempt++) {
       try {
-        const res = await client.send(new BeginTransactionCommand({ ...db, database: DB }), { abortSignal: signal });
+        const res = await client.send(
+          new BeginTransactionCommand({ ...db, database: DB }),
+          { abortSignal: signal },
+        );
         transactionId = res.transactionId;
       } catch (err) {
-        if (!(err instanceof DatabaseResumingException) || attempt === 12) throw err;
-        if (attempt === 1) console.log("Database is resuming from auto-pause, waiting...");
+        if (!(err instanceof DatabaseResumingException) || attempt === 12)
+          throw err;
+        if (attempt === 1)
+          console.log("Database is resuming from auto-pause, waiting...");
         await sleep(10_000, undefined, { signal });
       }
     }
 
     for (const [i, sql] of statements.entries()) {
       console.log(`  [${i + 1}/${statements.length}] ${summary(sql)}`);
-      await client.send(new ExecuteStatementCommand({ ...db, database: DB, transactionId, sql }), { abortSignal: signal });
+      await client.send(
+        new ExecuteStatementCommand({
+          ...db,
+          database: DB,
+          transactionId,
+          sql,
+        }),
+        { abortSignal: signal },
+      );
     }
 
-    await client.send(new CommitTransactionCommand({ ...db, transactionId }), { abortSignal: signal });
+    await client.send(new CommitTransactionCommand({ ...db, transactionId }), {
+      abortSignal: signal,
+    });
     transactionId = undefined;
     console.log("Done.");
   } finally {
     if (transactionId) {
       console.error("Rolling back.");
-      await client.send(new RollbackTransactionCommand({ ...db, transactionId })).catch(() => {});
+      await client
+        .send(new RollbackTransactionCommand({ ...db, transactionId }))
+        .catch(() => {});
     }
   }
 }
@@ -144,7 +168,9 @@ async function main(): Promise<void> {
     process.exit(2);
   }
   // pnpm runs scripts from the repo root; resolve paths from where it was called.
-  const files = args.map((f) => resolve(process.env.INIT_CWD ?? process.cwd(), f));
+  const files = args.map((f) =>
+    resolve(process.env.INIT_CWD ?? process.cwd(), f),
+  );
   for (const f of files) {
     if (!existsSync(f)) throw new Error(`no such file: ${f}`);
   }

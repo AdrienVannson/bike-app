@@ -176,11 +176,7 @@ importers:
         specifier: 15.9.0
         version: 15.9.0
 
-  app/api:
-    devDependencies:
-      '@aws-sdk/client-rds-data':
-        specifier: ^3.1169.0
-        version: 3.1169.0
+  app/api: {}
 
   app/web:
     dependencies:
