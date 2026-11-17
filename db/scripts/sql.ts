@@ -112,7 +112,9 @@ async function run(files: string[]): Promise<void> {
     // The cluster auto-pauses; calls fail while it resumes (~15-30s).
     for (let attempt = 1; !transactionId; attempt++) {
       try {
-        const res = await client.send(new BeginTransactionCommand({ ...db, database: DB }), { abortSignal: signal });
+        const res = await client.send(new BeginTransactionCommand({ ...db, database: DB }), {
+          abortSignal: signal,
+        });
         transactionId = res.transactionId;
       } catch (err) {
         if (!(err instanceof DatabaseResumingException) || attempt === 12) throw err;
@@ -123,10 +125,20 @@ async function run(files: string[]): Promise<void> {
 
     for (const [i, sql] of statements.entries()) {
       console.log(`  [${i + 1}/${statements.length}] ${summary(sql)}`);
-      await client.send(new ExecuteStatementCommand({ ...db, database: DB, transactionId, sql }), { abortSignal: signal });
+      await client.send(
+        new ExecuteStatementCommand({
+          ...db,
+          database: DB,
+          transactionId,
+          sql,
+        }),
+        { abortSignal: signal },
+      );
     }
 
-    await client.send(new CommitTransactionCommand({ ...db, transactionId }), { abortSignal: signal });
+    await client.send(new CommitTransactionCommand({ ...db, transactionId }), {
+      abortSignal: signal,
+    });
     transactionId = undefined;
     console.log("Done.");
   } finally {
