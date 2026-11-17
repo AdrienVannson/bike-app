@@ -1,11 +1,13 @@
 name: Audit
 
+# TODO: re-enable automatic audits before going to production.
 on:
-  push:
-    branches: [main]
-  pull_request:
-  schedule:
-    - cron: "0 6 * * 1" # weekly, Monday 06:00 UTC
+  workflow_dispatch: # manual runs only for now
+  # push:
+  #   branches: [main]
+  # pull_request:
+  # schedule:
+  #   - cron: "0 6 * * 1" # weekly, Monday 06:00 UTC
 
 permissions:
   contents: read
