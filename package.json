@@ -8,10 +8,9 @@
   "license": "ISC",
   "scripts": {
     "api:build": "pnpm --filter @bike/api build",
-    "api:typecheck": "pnpm --filter @bike/api typecheck",
     "db:reset": "pnpm --filter @bike/db sql db/schema.sql",
     "db:seed": "pnpm --filter @bike/db sql db/seed.sql",
-    "typecheck": "pnpm api:typecheck",
+    "typecheck": "pnpm -r typecheck",
     "fmt": "pnpm fmt:ts && pnpm fmt:sql && pnpm fmt:tf",
     "fmt:ts": "biome format --write",
     "fmt:sql": "git ls-files -z '*.sql' | xargs -0 -n1 sql-formatter --fix -c .sql-formatter.json",
