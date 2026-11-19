@@ -96,7 +96,9 @@ async function run(files: string[]): Promise<void> {
   const client = new RDSDataClient({ region: resourceArn.split(":")[3] });
 
   console.log(`Statements to run on ${resourceArn}:`);
-  statements.forEach((s, i) => console.log(`  ${String(i + 1).padStart(3)}  ${summary(s)}`));
+  for (const [i, s] of statements.entries()) {
+    console.log(`  ${String(i + 1).padStart(3)}  ${summary(s)}`);
+  }
   if (!(await confirm("Run them? [y/N] "))) {
     console.log("Aborted.");
     process.exit(1);
