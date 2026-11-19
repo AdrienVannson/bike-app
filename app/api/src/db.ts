@@ -1,11 +1,13 @@
 // Database access through the RDS Data API. The AWS SDK v3 ships with the
 // Lambda Node.js runtime, so it is not bundled.
+
+import { setTimeout as sleep } from "node:timers/promises";
 import {
   DatabaseResumingException,
   ExecuteStatementCommand,
+  type Field,
   RDSDataClient,
 } from "@aws-sdk/client-rds-data";
-import { setTimeout as sleep } from "node:timers/promises";
 
 const client = new RDSDataClient({});
 
@@ -20,7 +22,10 @@ const db = {
  * column names). `params` maps `:name` placeholders to Data API values, e.g.
  * `{ id: { longValue: 1 } }`.
  */
-export async function query(sql, params = {}) {
+export async function query<Row = Record<string, unknown>>(
+  sql: string,
+  params: Record<string, Field> = {},
+): Promise<Row[]> {
   const parameters = Object.entries(params).map(([name, value]) => ({
     name,
     value,

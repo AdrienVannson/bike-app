@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "esbuild src/index.js --bundle --platform=node --target=node26 --format=esm --external:@aws-sdk/* --outfile=dist/index.mjs"
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node26 --format=esm --external:@aws-sdk/* --outfile=dist/index.mjs",
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@hono/aws-lambda": "^1.0.1",
@@ -13,6 +14,9 @@
   },
   "devDependencies": {
     "@aws-sdk/client-rds-data": "^3.1169.0",
-    "esbuild": "^0.28.2"
+    "@tsconfig/node26": "^26.0.2",
+    "@types/node": "^26.6.6",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
   }
 }
