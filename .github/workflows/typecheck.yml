@@ -8,9 +8,8 @@ on:
 permissions:
   contents: read
 
-# TODO: also type check the web app (app/web) and the db scripts (db/scripts).
 jobs:
-  api:
+  typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
