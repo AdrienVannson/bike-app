@@ -8,9 +8,6 @@
   "license": "ISC",
   "scripts": {
     "api:build": "pnpm --filter @bike/api build",
-    "api:typecheck": "pnpm --filter @bike/api typecheck",
-    "web:typecheck": "pnpm --filter @bike/web typecheck",
-    "db:typecheck": "pnpm --filter @bike/db typecheck",
     "db:reset": "pnpm --filter @bike/db sql db/schema.sql",
     "db:seed": "pnpm --filter @bike/db sql db/seed.sql",
     "typecheck": "pnpm -r typecheck",
