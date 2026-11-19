@@ -7,7 +7,7 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "api:build": "pnpm --filter @bike/api build",
+    "build": "pnpm -r build",
     "db:reset": "pnpm --filter @bike/db sql db/schema.sql",
     "db:seed": "pnpm --filter @bike/db sql db/seed.sql",
     "typecheck": "pnpm -r typecheck",
