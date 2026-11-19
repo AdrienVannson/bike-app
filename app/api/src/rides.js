@@ -1,18 +1,18 @@
 import { query } from "./db.js";
-import { json } from "./http.js";
 
-// GET /rides/{id}
-export async function getRide(event) {
-  const { id } = event.pathParameters;
-  if (!/^\d+$/.test(id) || !Number.isSafeInteger(Number(id))) {
-    return json(400, { message: "Invalid ride id" });
-  }
+// GET /rides/:id
+export async function getRide(c) {
+  const { id } = c.req.valid("param");
 
-  const [ride] = await query(`SELECT id, user_id AS "userId", distance FROM rides WHERE id = :id`, {
-    id: { longValue: Number(id) },
+  const [row] = await query(`SELECT id, user_id, distance FROM rides WHERE id = :id`, {
+    id: { longValue: id },
   });
-  if (!ride) {
-    return json(404, { message: "Ride not found" });
+  if (!row) {
+    return c.json({ message: "Ride not found" }, 404);
   }
-  return json(200, ride);
+  return c.json({
+    id: row.id,
+    userId: row.user_id,
+    distance: row.distance,
+  });
 }

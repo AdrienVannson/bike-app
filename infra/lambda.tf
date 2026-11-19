@@ -1,9 +1,9 @@
 # Shared by every Lambda: same code bundle, one handler per function.
+# The bundle must be built first.
 data "archive_file" "api" {
   type        = "zip"
-  source_dir  = "${path.module}/../app/api"
+  source_dir  = "${path.module}/../app/api/dist"
   output_path = "${path.module}/build/api.zip"
-  excludes    = ["node_modules/**"]
 }
 
 data "aws_iam_policy_document" "assume_role" {
@@ -66,7 +66,7 @@ resource "aws_lambda_function" "api" {
   role          = aws_iam_role.api.arn
 
   runtime = "nodejs26.x"
-  handler = "src/index.handler"
+  handler = "index.handler"
 
   timeout     = 29
   memory_size = 256
