@@ -2,7 +2,17 @@
   "name": "@bike/api",
   "private": true,
   "type": "module",
+  "scripts": {
+    "build": "esbuild src/index.js --bundle --platform=node --target=node26 --format=esm --external:@aws-sdk/* --outfile=dist/index.mjs"
+  },
+  "dependencies": {
+    "@hono/aws-lambda": "^1.0.1",
+    "@hono/zod-validator": "^0.9.1",
+    "hono": "^4.13.19",
+    "zod": "^4.6.7"
+  },
   "devDependencies": {
-    "@aws-sdk/client-rds-data": "^3.1169.0"
+    "@aws-sdk/client-rds-data": "^3.1169.0",
+    "esbuild": "^0.28.2"
   }
 }

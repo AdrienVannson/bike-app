@@ -2,3 +2,5 @@ packages:
   - "app/*"
   - "packages/*"
   - "db"
+allowBuilds:
+  esbuild: true
