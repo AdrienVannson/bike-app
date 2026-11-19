@@ -2,10 +2,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 
-const root = document.getElementById("root");
-if (!root) throw new Error("missing #root element");
-
-createRoot(root).render(
+// biome-ignore lint/style/noNonNullAssertion: #root is in index.html
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <App />
   </StrictMode>,
