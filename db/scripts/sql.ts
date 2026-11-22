@@ -26,7 +26,7 @@ const DB = "bike";
 const ROOT = resolve(import.meta.dirname, "../..");
 const ENVS = ["dev", "test", "prod"] as const;
 type Env = (typeof ENVS)[number];
-const USAGE = "usage: pnpm db:sql [--env dev|test|prod] FILE...";
+const USAGE = "usage: pnpm db:<dev|test|prod>:sql FILE...";
 
 /**
  * Splits a SQL file into statements. A statement ends at a line ending with
@@ -69,9 +69,9 @@ function terraformOutput(env: Env, name: string): string {
   }).trim();
 }
 
-/** Splits the arguments into `--env <name>` (default dev) and files. */
+/** Splits the arguments into `--env <name>` (required) and files. */
 function parseArgs(args: string[]): { env: Env; files: string[] } {
-  let env: Env = "dev";
+  let env: Env | undefined;
   const files: string[] = [];
   for (let i = 0; i < args.length; i++) {
     if (args[i] !== "--env") {
@@ -84,6 +84,7 @@ function parseArgs(args: string[]): { env: Env; files: string[] } {
     }
     env = value as Env;
   }
+  if (!env) throw new Error(`--env is required (one of ${ENVS.join(", ")})`);
   return { env, files };
 }
 
