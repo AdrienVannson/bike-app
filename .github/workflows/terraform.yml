@@ -11,9 +11,12 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dir: [infra, infra/bootstrap]
     defaults:
       run:
-        working-directory: infra
+        working-directory: ${{ matrix.dir }}
     steps:
       - uses: actions/checkout@v7
       - uses: hashicorp/setup-terraform@v4
