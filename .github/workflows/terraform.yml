@@ -11,17 +11,13 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        dir: [infra, infra/bootstrap]
-    defaults:
-      run:
-        working-directory: ${{ matrix.dir }}
     steps:
       - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          standalone: true
       - uses: hashicorp/setup-terraform@v4
         with:
           terraform_version: "~1.17.0"
           terraform_wrapper: false
-      - run: terraform init -backend=false -input=false -lockfile=readonly
-      - run: terraform validate
+      - run: pnpm tf:validate

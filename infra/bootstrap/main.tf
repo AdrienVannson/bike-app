@@ -1,10 +1,11 @@
-# Bootstrap: creates the S3 bucket that stores the state of ../ (the main infra).
-# This config itself keeps its (tiny) state locally. If that state is ever lost,
-# re-adopt the bucket with:
-#   terraform import aws_s3_bucket.tf_state bike-terraform-state-021275983436
-
+# Bootstrap: creates the S3 bucket that stores the state of ../envs/<env>,
+# in whichever account the credentials point to. Run it once per environment:
+#   pnpm tf:bootstrap:dev init
+#   pnpm tf:bootstrap:dev apply
 terraform {
   required_version = ">= 1.17"
+
+  backend "local" {}
 
   required_providers {
     aws = {
@@ -18,8 +19,10 @@ provider "aws" {
   region = "eu-west-3"
 }
 
+data "aws_caller_identity" "current" {}
+
 resource "aws_s3_bucket" "tf_state" {
-  bucket = "bike-terraform-state-021275983436"
+  bucket = "bike-terraform-state-${data.aws_caller_identity.current.account_id}"
 
   lifecycle {
     prevent_destroy = true

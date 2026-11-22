@@ -49,10 +49,10 @@ resource "aws_rds_cluster" "db" {
     seconds_until_auto_pause = 900
   }
 
-  backup_retention_period   = 7
-  deletion_protection       = true
-  skip_final_snapshot       = false
-  final_snapshot_identifier = "bike-db-final"
+  backup_retention_period   = var.db_backup_retention_days
+  deletion_protection       = var.db_deletion_protection
+  skip_final_snapshot       = !var.db_deletion_protection
+  final_snapshot_identifier = var.db_deletion_protection ? "bike-db-final" : null
   copy_tags_to_snapshot     = true
 
   lifecycle {
@@ -66,12 +66,4 @@ resource "aws_rds_cluster_instance" "db" {
 
   instance_class = "db.serverless"
   engine         = aws_rds_cluster.db.engine
-}
-
-output "db_cluster_arn" {
-  value = aws_rds_cluster.db.arn
-}
-
-output "db_secret_arn" {
-  value = aws_rds_cluster.db.master_user_secret[0].secret_arn
 }
