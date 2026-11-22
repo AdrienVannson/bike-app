@@ -22,6 +22,7 @@ updates:
 
   - package-ecosystem: "terraform"
     directories:
+      - "/infra/app"
       - "/infra/envs/dev"
       - "/infra/envs/test"
       - "/infra/envs/prod"
