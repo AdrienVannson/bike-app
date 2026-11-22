@@ -24,6 +24,9 @@ import {
 
 const DB = "bike";
 const ROOT = resolve(import.meta.dirname, "../..");
+const ENVS = ["dev", "test", "prod"] as const;
+type Env = (typeof ENVS)[number];
+const USAGE = "usage: pnpm db:<dev|test|prod>:sql FILE...";
 
 /**
  * Splits a SQL file into statements. A statement ends at a line ending with
@@ -58,11 +61,31 @@ function summary(statement: string): string {
   return statement.split("\n")[0].trim().slice(0, 72);
 }
 
-function terraformOutput(name: string): string {
-  return execFileSync("terraform", [`-chdir=${resolve(ROOT, "infra")}`, "output", "-raw", name], {
+function terraformOutput(env: Env, name: string): string {
+  const dir = resolve(ROOT, "infra/envs", env);
+  return execFileSync("terraform", [`-chdir=${dir}`, "output", "-raw", name], {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "inherit"],
   }).trim();
+}
+
+/** Splits the arguments into `--env <name>` (required) and files. */
+function parseArgs(args: string[]): { env: Env; files: string[] } {
+  let env: Env | undefined;
+  const files: string[] = [];
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] !== "--env") {
+      files.push(args[i]);
+      continue;
+    }
+    const value = args[++i];
+    if (!ENVS.includes(value as Env)) {
+      throw new Error(`--env must be one of ${ENVS.join(", ")}, got: ${value ?? "nothing"}`);
+    }
+    env = value as Env;
+  }
+  if (!env) throw new Error(`--env is required (one of ${ENVS.join(", ")})`);
+  return { env, files };
 }
 
 async function confirm(question: string): Promise<boolean> {
@@ -79,7 +102,7 @@ async function confirm(question: string): Promise<boolean> {
   }
 }
 
-async function run(files: string[]): Promise<void> {
+async function run(env: Env, files: string[]): Promise<void> {
   const statements = files.flatMap((f) => {
     try {
       return splitStatements(readFileSync(f, "utf8"));
@@ -89,13 +112,13 @@ async function run(files: string[]): Promise<void> {
   });
   if (statements.length === 0) throw new Error("no statements found");
 
-  const resourceArn = terraformOutput("db_cluster_arn");
-  const secretArn = terraformOutput("db_secret_arn");
+  const resourceArn = terraformOutput(env, "db_cluster_arn");
+  const secretArn = terraformOutput(env, "db_secret_arn");
   const db = { resourceArn, secretArn };
   // arn:aws:rds:REGION:ACCOUNT:cluster:NAME
   const client = new RDSDataClient({ region: resourceArn.split(":")[3] });
 
-  console.log(`Statements to run on ${resourceArn}:`);
+  console.log(`Statements to run on ${env} (${resourceArn}):`);
   for (const [i, s] of statements.entries()) {
     console.log(`  ${String(i + 1).padStart(3)}  ${summary(s)}`);
   }
@@ -152,9 +175,9 @@ async function run(files: string[]): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  const args = process.argv.slice(2);
+  const { env, files: args } = parseArgs(process.argv.slice(2));
   if (args.length === 0) {
-    console.error("usage: pnpm db:sql FILE...");
+    console.error(USAGE);
     process.exit(2);
   }
   // pnpm runs scripts from the repo root; resolve paths from where it was called.
@@ -163,7 +186,7 @@ async function main(): Promise<void> {
     if (!existsSync(f)) throw new Error(`no such file: ${f}`);
   }
 
-  await run(files);
+  await run(env, files);
 }
 
 if (import.meta.main) {

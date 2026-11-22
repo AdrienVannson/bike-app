@@ -1,5 +1,5 @@
 -- Sample data for development. Assumes an empty database (e.g. right after
--- `pnpm db:reset`): `pnpm db:seed`.
+-- `pnpm db:dev:reset`): `pnpm db:dev:seed`.
 --
 -- Same format rules as schema.sql: end each statement with `;` at the end of
 -- a line.

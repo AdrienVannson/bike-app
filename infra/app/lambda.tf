@@ -2,7 +2,7 @@
 # The bundle must be built first.
 data "archive_file" "api" {
   type        = "zip"
-  source_dir  = "${path.module}/../app/api/dist"
+  source_dir  = "${path.module}/../../app/api/dist"
   output_path = "${path.module}/build/api.zip"
 }
 

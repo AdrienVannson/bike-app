@@ -1,5 +1,5 @@
 -- The whole database schema. Running it recreates everything from scratch and
--- DELETES ALL DATA: `pnpm db:reset`.
+-- DELETES ALL DATA: `pnpm db:dev:reset` (or db:test:reset).
 --
 -- db/scripts/sql.ts sends statements one at a time through the RDS
 -- Data API, so end each statement with `;` at the end of a line, with no

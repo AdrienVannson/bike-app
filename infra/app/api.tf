@@ -9,10 +9,6 @@ resource "aws_apigatewayv2_stage" "default" {
   auto_deploy = true
 }
 
-output "endpoint_url" {
-  value = aws_apigatewayv2_api.api_gateway.api_endpoint
-}
-
 resource "aws_apigatewayv2_integration" "api" {
   api_id                 = aws_apigatewayv2_api.api_gateway.id
   integration_type       = "AWS_PROXY"

@@ -22,7 +22,10 @@ updates:
 
   - package-ecosystem: "terraform"
     directories:
-      - "/infra"
+      - "/infra/app"
+      - "/infra/envs/dev"
+      - "/infra/envs/test"
+      - "/infra/envs/prod"
       - "/infra/bootstrap"
     schedule:
       interval: "monthly"
