@@ -2,6 +2,12 @@
 # in whichever account the credentials point to. Run it once per environment:
 #   pnpm tf:bootstrap:dev init
 #   pnpm tf:bootstrap:dev apply
+#
+# This config keeps its state locally, in state/<env>.tfstate.
+# If that state is ever lost, re-adopt the existing bucket before applying:
+#   pnpm tf:bootstrap:<env> init
+#   pnpm tf:bootstrap:<env> import aws_s3_bucket.tf_state bike-terraform-state-<account-id>
+
 terraform {
   required_version = ">= 1.17"
 
