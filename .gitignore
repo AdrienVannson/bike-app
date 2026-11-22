@@ -8,4 +8,4 @@ dist/
 *.tfstate
 *.tfstate.*
 *.tfvars
-infra/build/
+infra/app/build/
