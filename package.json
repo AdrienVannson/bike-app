@@ -51,6 +51,6 @@
   "type": "module",
   "devDependencies": {
     "@biomejs/biome": "2.6.8",
-    "sql-formatter": "15.9.0"
+    "sql-formatter": "15.10.0"
   }
 }

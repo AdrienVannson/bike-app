@@ -173,8 +173,8 @@ importers:
         specifier: runtime:26.12.1
         version: runtime:26.12.1
       sql-formatter:
-        specifier: 15.9.0
-        version: 15.9.0
+        specifier: 15.10.0
+        version: 15.10.0
 
   app/api:
     dependencies:
@@ -192,8 +192,8 @@ importers:
         version: 4.6.7
     devDependencies:
       '@aws-sdk/client-rds-data':
-        specifier: ^3.1169.0
-        version: 3.1169.0
+        specifier: ^3.1173.0
+        version: 3.1173.0
       '@tsconfig/node26':
         specifier: ^26.0.2
         version: 26.0.2
@@ -265,8 +265,8 @@ importers:
   db:
     devDependencies:
       '@aws-sdk/client-rds-data':
-        specifier: ^3.1169.0
-        version: 3.1169.0
+        specifier: ^3.1173.0
+        version: 3.1173.0
       '@tsconfig/node26':
         specifier: ^26.0.2
         version: 26.0.2
@@ -279,8 +279,8 @@ importers:
 
 packages:
 
-  '@aws-sdk/client-rds-data@3.1169.0':
-    resolution: {integrity: sha512-hBx0lsBA+Dqbh7nYVMqfxakZoceKbEi/ANyXtW3qsSiP0R+6E0IH/g4e0Zw3hYRPHcNzusWZnx8tvs11XqVL8Q==}
+  '@aws-sdk/client-rds-data@3.1173.0':
+    resolution: {integrity: sha512-hzqb774SgBst0noWkpK5BFloKv9vJpIDOEY74/tJGU9ENBVZxYQwRD/OpB1SaTRtsghv/o4hvgZECqKefdRv0Q==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/core@3.981.0':
@@ -2123,8 +2123,8 @@ packages:
     resolution: {integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==}
     engines: {node: '>=0.10.0'}
 
-  sql-formatter@15.9.0:
-    resolution: {integrity: sha512-3A/N+v+mA5/PDU+FlO4uTFE0L/Mmg63c/Ny161Qv2b1Mxp9IX8War+LLmq17LA/Kgu4KXAR7iutK2JaHWJMMtw==}
+  sql-formatter@15.10.0:
+    resolution: {integrity: sha512-9cdsDFzPQukym8i9Eedc72L9y/2wEi2pQZVE/3eXthFjDOnvvmzCIk+N6miWbBixdWXU2qdV92V7PLnvlNgEfA==}
     hasBin: true
 
   stdin-discarder@0.2.2:
@@ -2311,7 +2311,7 @@ packages:
 
 snapshots:
 
-  '@aws-sdk/client-rds-data@3.1169.0':
+  '@aws-sdk/client-rds-data@3.1173.0':
     dependencies:
       '@aws-sdk/core': 3.981.0
       '@aws-sdk/credential-provider-node': 3.972.97
@@ -3877,7 +3877,7 @@ snapshots:
 
   source-map@0.6.1: {}
 
-  sql-formatter@15.9.0:
+  sql-formatter@15.10.0:
     dependencies:
       argparse: 2.0.1
       nearley: 2.20.1
