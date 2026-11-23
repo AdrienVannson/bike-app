@@ -5,6 +5,14 @@
     "clientKind": "git",
     "useIgnoreFile": true
   },
+  "files": {
+    "includes": [
+      "**",
+      "!app/web/src/components/ui",
+      "!app/web/src/lib/utils.ts",
+      "!app/web/src/index.css"
+    ]
+  },
   "formatter": {
     "indentStyle": "space",
     "lineWidth": 100
@@ -25,6 +33,11 @@
       "source": {
         "organizeImports": "on"
       }
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
   }
 }

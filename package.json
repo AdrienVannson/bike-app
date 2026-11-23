@@ -8,6 +8,7 @@
   "license": "ISC",
   "scripts": {
     "build": "pnpm -r build",
+    "web:dev": "pnpm --filter @bike/web dev",
     "db:dev:sql": "env AWS_PROFILE=cycling-dev node db/scripts/sql.ts --env dev",
     "db:test:sql": "env AWS_PROFILE=cycling-test node db/scripts/sql.ts --env test",
     "db:prod:sql": "env AWS_PROFILE=cycling-prod node db/scripts/sql.ts --env prod",
