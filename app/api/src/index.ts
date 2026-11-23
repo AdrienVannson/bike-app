@@ -2,20 +2,19 @@ import { DatabaseResumingException } from "@aws-sdk/client-rds-data";
 import { handle } from "@hono/aws-lambda";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { getRide, rideParam } from "./rides.ts";
+import { getRide, getRideTrack, rideParam } from "./rides.ts";
 
 const app = new Hono();
 
-app.get(
-  "/rides/:id",
-  zValidator("param", rideParam, (result, c) => {
-    if (!result.success) {
-      return c.json({ message: "Invalid id" }, 400);
-    }
-    return undefined;
-  }),
-  getRide,
-);
+const validateRideParam = zValidator("param", rideParam, (result, c) => {
+  if (!result.success) {
+    return c.json({ message: "Invalid id" }, 400);
+  }
+  return undefined;
+});
+
+app.get("/rides/:id", validateRideParam, getRide);
+app.get("/rides/:id/track", validateRideParam, getRideTrack);
 
 app.notFound((c) => c.json({ message: "Not found" }, 404));
 

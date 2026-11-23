@@ -10,14 +10,15 @@ CREATE SCHEMA public;
 
 GRANT USAGE ON SCHEMA public TO PUBLIC;
 
+CREATE EXTENSION postgis;
+
 CREATE TABLE rides (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   user_id bigint NOT NULL,
   started_at timestamptz NOT NULL,
-  distance double precision NOT NULL CHECK (distance >= 0)
+  distance double precision NOT NULL CHECK (distance >= 0), -- meters
+  simplified_track geometry (LineString, 4326) -- TODO: give precise limit of nb of points
 );
-
-COMMENT ON COLUMN rides.distance IS 'Meters';
 
 -- A user's rides, most recent first.
 CREATE INDEX rides_user_id_started_at_idx ON rides (user_id, started_at DESC);
