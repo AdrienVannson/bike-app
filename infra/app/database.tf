@@ -46,7 +46,7 @@ resource "aws_rds_cluster" "db" {
   serverlessv2_scaling_configuration {
     min_capacity             = 0
     max_capacity             = 1
-    seconds_until_auto_pause = 900
+    seconds_until_auto_pause = 300
   }
 
   backup_retention_period   = var.db_backup_retention_days
