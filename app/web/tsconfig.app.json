@@ -24,7 +24,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
-    /* Aliases (resolved relative to this tsconfig since TS 7 removed baseUrl) */
+    /* Aliases (resolved relative to this tsconfig) */
     "paths": {
       "@/*": ["./src/*"]
     }
