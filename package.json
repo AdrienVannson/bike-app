@@ -32,6 +32,7 @@
     "tf:test": "env AWS_PROFILE=cycling-test terraform -chdir=infra/envs/test",
     "tf:prod": "env AWS_PROFILE=cycling-prod terraform -chdir=infra/envs/prod",
     "deploy:dev": "pnpm --filter @bike/api build && pnpm tf:dev apply",
+    "deploy:test": "pnpm --filter @bike/api build && pnpm tf:test apply",
     "tf:bootstrap:dev": "env AWS_PROFILE=cycling-dev TF_DATA_DIR=.terraform/dev TF_CLI_ARGS_init=-backend-config=path=state/dev.tfstate terraform -chdir=infra/bootstrap",
     "tf:bootstrap:test": "env AWS_PROFILE=cycling-test TF_DATA_DIR=.terraform/test TF_CLI_ARGS_init=-backend-config=path=state/test.tfstate terraform -chdir=infra/bootstrap",
     "tf:bootstrap:prod": "env AWS_PROFILE=cycling-prod TF_DATA_DIR=.terraform/prod TF_CLI_ARGS_init=-backend-config=path=state/prod.tfstate terraform -chdir=infra/bootstrap",
