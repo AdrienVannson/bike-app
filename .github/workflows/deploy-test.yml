@@ -1,0 +1,51 @@
+name: Deploy and test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-test:
+    # This runs the code with admin access to the test account: limited to people
+    # with write access to the repo.
+    if: >-
+      github.event_name == 'push' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.login != 'dependabot[bot]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45 # make sure we don't leave AWS in a bad state
+    # There is a single test environment: one run at a time, across all PRs and
+    # main. The other ones wait for their turn.
+    concurrency:
+      group: test-environment
+      queue: max
+    environment: test
+    permissions:
+      contents: read
+      id-token: write # OIDC token, to assume the AWS role
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          standalone: true
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: "~1.17.0"
+          terraform_wrapper: false
+      - run: pnpm install --frozen-lockfile
+      - uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          aws-region: eu-west-3
+          aws-profile: cycling-test
+          role-to-assume: arn:aws:iam::125035824962:role/bike-ci-deploy
+          allowed-account-ids: "125035824962"
+      - run: pnpm tf:test init -input=false -lockfile=readonly
+      - run: pnpm deploy:test -input=false -auto-approve -lock-timeout=5m
+      # TODO: once prod is used, run migration scripts instead of recreating the
+      # database, so that migrations are tested before they reach prod.
+      - run: pnpm db:test:reset --yes
+      - run: pnpm db:test:seed --yes
