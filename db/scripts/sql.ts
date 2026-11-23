@@ -9,6 +9,7 @@
 // Needs: AWS credentials and terraform.
 
 import { execFileSync } from "node:child_process";
+import { once } from "node:events";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
@@ -26,7 +27,7 @@ const DB = "bike";
 const ROOT = resolve(import.meta.dirname, "../..");
 const ENVS = ["dev", "test", "prod"] as const;
 type Env = (typeof ENVS)[number];
-const USAGE = "usage: pnpm db:<dev|test|prod>:sql [--yes] FILE...";
+const USAGE = "usage: pnpm db:<dev|test|prod>:sql [--yes] FILE... (--yes: not on prod)";
 
 /**
  * Splits a SQL file into statements. A statement ends at a line ending with
@@ -69,7 +70,7 @@ function terraformOutput(env: Env, name: string): string {
   }).trim();
 }
 
-/** Splits the arguments into `--env <name>` (required), `--yes` (no confirmation) and files. */
+/** Splits the arguments into `--env <name>` (required), `--yes` (no confirmation, refused on prod) and files. */
 function parseArgs(args: string[]): { env: Env; yes: boolean; files: string[] } {
   let env: Env | undefined;
   let yes = false;
@@ -90,6 +91,7 @@ function parseArgs(args: string[]): { env: Env; yes: boolean; files: string[] } 
     env = value as Env;
   }
   if (!env) throw new Error(`--env is required (one of ${ENVS.join(", ")})`);
+  if (yes && env === "prod") throw new Error("--yes is not allowed on prod");
   return { env, yes, files };
 }
 
@@ -101,7 +103,10 @@ async function confirm(question: string): Promise<boolean> {
     process.exit(1);
   });
   try {
-    return /^y/i.test(await rl.question(question));
+    // question() never settles if stdin ends (Ctrl-D, no stdin in CI): node would
+    // then exit with code 0. Treat it as a no.
+    const answer = await Promise.race([rl.question(question), once(rl, "close").then(() => "")]);
+    return /^y/i.test(answer);
   } finally {
     rl.close();
   }
