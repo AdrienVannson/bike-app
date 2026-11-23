@@ -8,6 +8,7 @@
   "license": "ISC",
   "scripts": {
     "build": "pnpm -r build",
+    "aws:login": "aws sso login --sso-session cycling",
     "web:dev": "pnpm --filter @bike/web dev",
     "db:dev:sql": "env AWS_PROFILE=cycling-dev node db/scripts/sql.ts --env dev",
     "db:test:sql": "env AWS_PROFILE=cycling-test node db/scripts/sql.ts --env test",
@@ -30,6 +31,7 @@
     "tf:dev": "env AWS_PROFILE=cycling-dev terraform -chdir=infra/envs/dev",
     "tf:test": "env AWS_PROFILE=cycling-test terraform -chdir=infra/envs/test",
     "tf:prod": "env AWS_PROFILE=cycling-prod terraform -chdir=infra/envs/prod",
+    "deploy:dev": "pnpm --filter @bike/api build && pnpm tf:dev apply",
     "tf:bootstrap:dev": "env AWS_PROFILE=cycling-dev TF_DATA_DIR=.terraform/dev TF_CLI_ARGS_init=-backend-config=path=state/dev.tfstate terraform -chdir=infra/bootstrap",
     "tf:bootstrap:test": "env AWS_PROFILE=cycling-test TF_DATA_DIR=.terraform/test TF_CLI_ARGS_init=-backend-config=path=state/test.tfstate terraform -chdir=infra/bootstrap",
     "tf:bootstrap:prod": "env AWS_PROFILE=cycling-prod TF_DATA_DIR=.terraform/prod TF_CLI_ARGS_init=-backend-config=path=state/prod.tfstate terraform -chdir=infra/bootstrap",
