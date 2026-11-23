@@ -17,7 +17,7 @@ CREATE TABLE rides (
   user_id bigint NOT NULL,
   started_at timestamptz NOT NULL,
   distance double precision NOT NULL CHECK (distance >= 0), -- meters
-  simplified_track geometry (LineString, 4326), -- TODO: give precise limit of nb of points
+  simplified_track geometry (LineString, 4326) -- TODO: give precise limit of nb of points
 );
 
 -- A user's rides, most recent first.
