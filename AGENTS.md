@@ -9,6 +9,8 @@ As much as possible, CI should just call pnpm commands (it must be easy to repro
 Agents must not push, open or merge PRs, or re-run CI workflows. Pushing to a
 PR deploys the code to `test`.
 
+Agents must not commit their work unless prompted so.
+
 ## Testing strategy
 
 This is an AWS-based application. Testing it locally isn't reasonnable. Emulation
