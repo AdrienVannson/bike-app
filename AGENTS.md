@@ -6,6 +6,9 @@ Don't update AGENTS.md yourself.
 
 As much as possible, CI should just call pnpm commands (it must be easy to reproduce ci locally).
 
+Agents must not push, open or merge PRs, or re-run CI workflows. Pushing to a
+PR deploys the code to `test`.
+
 ## Testing strategy
 
 This is an AWS-based application. Testing it locally isn't reasonnable. Emulation

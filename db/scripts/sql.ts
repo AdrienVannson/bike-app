@@ -9,6 +9,7 @@
 // Needs: AWS credentials and terraform.
 
 import { execFileSync } from "node:child_process";
+import { once } from "node:events";
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
@@ -26,7 +27,7 @@ const DB = "bike";
 const ROOT = resolve(import.meta.dirname, "../..");
 const ENVS = ["dev", "test", "prod"] as const;
 type Env = (typeof ENVS)[number];
-const USAGE = "usage: pnpm db:<dev|test|prod>:sql FILE...";
+const USAGE = "usage: pnpm db:<dev|test|prod>:sql [--yes] FILE... (--yes: not on prod)";
 
 /**
  * Splits a SQL file into statements. A statement ends at a line ending with
@@ -69,11 +70,16 @@ function terraformOutput(env: Env, name: string): string {
   }).trim();
 }
 
-/** Splits the arguments into `--env <name>` (required) and files. */
-function parseArgs(args: string[]): { env: Env; files: string[] } {
+/** Splits the arguments into `--env <name>` (required), `--yes` (no confirmation, refused on prod) and files. */
+function parseArgs(args: string[]): { env: Env; yes: boolean; files: string[] } {
   let env: Env | undefined;
+  let yes = false;
   const files: string[] = [];
   for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--yes") {
+      yes = true;
+      continue;
+    }
     if (args[i] !== "--env") {
       files.push(args[i]);
       continue;
@@ -85,7 +91,8 @@ function parseArgs(args: string[]): { env: Env; files: string[] } {
     env = value as Env;
   }
   if (!env) throw new Error(`--env is required (one of ${ENVS.join(", ")})`);
-  return { env, files };
+  if (yes && env === "prod") throw new Error("--yes is not allowed on prod");
+  return { env, yes, files };
 }
 
 async function confirm(question: string): Promise<boolean> {
@@ -96,13 +103,16 @@ async function confirm(question: string): Promise<boolean> {
     process.exit(1);
   });
   try {
-    return /^y/i.test(await rl.question(question));
+    // question() never settles if stdin ends (Ctrl-D, no stdin in CI): node would
+    // then exit with code 0. Treat it as a no.
+    const answer = await Promise.race([rl.question(question), once(rl, "close").then(() => "")]);
+    return /^y/i.test(answer);
   } finally {
     rl.close();
   }
 }
 
-async function run(env: Env, files: string[]): Promise<void> {
+async function run(env: Env, yes: boolean, files: string[]): Promise<void> {
   const statements = files.flatMap((f) => {
     try {
       return splitStatements(readFileSync(f, "utf8"));
@@ -122,7 +132,7 @@ async function run(env: Env, files: string[]): Promise<void> {
   for (const [i, s] of statements.entries()) {
     console.log(`  ${String(i + 1).padStart(3)}  ${summary(s)}`);
   }
-  if (!(await confirm("Run them? [y/N] "))) {
+  if (!yes && !(await confirm("Run them? [y/N] "))) {
     console.log("Aborted.");
     process.exit(1);
   }
@@ -175,7 +185,7 @@ async function run(env: Env, files: string[]): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  const { env, files: args } = parseArgs(process.argv.slice(2));
+  const { env, yes, files: args } = parseArgs(process.argv.slice(2));
   if (args.length === 0) {
     console.error(USAGE);
     process.exit(2);
@@ -186,7 +196,7 @@ async function main(): Promise<void> {
     if (!existsSync(f)) throw new Error(`no such file: ${f}`);
   }
 
-  await run(env, files);
+  await run(env, yes, files);
 }
 
 if (import.meta.main) {
